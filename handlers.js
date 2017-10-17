@@ -1,11 +1,12 @@
 const logger = require('./logger');
-const sender = require('./sender');
+const messageSender = require('./sender');
 
 module.exports = {
     user(req, res) {
-        const body=req.body;
+        const bodyContent = req.body;
         res.setHeader('Content-Type', 'application/json');
-        logger.info(body)
+        logger.info(bodyContent);
+        messageSender.sendMessage(bodyContent);
         res.send('OK');
     }
 }

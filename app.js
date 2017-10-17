@@ -8,7 +8,6 @@ var ampq = require("./amqp-connect");
 
 var ampqC = new ampq();
 
-console.log(ampqC.ampq);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
