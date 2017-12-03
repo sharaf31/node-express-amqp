@@ -1,22 +1,44 @@
-function createConn() {
+const amqp = require('amqplib/callback_api')
 
-    console.log('created amqp callback');
+const AMPQConnector = {
+    host: 'amqp://localhost',
 
-    var self = {};
-    var amqp = require('amqplib/callback_api')
-    self.ampq = amqp;
+    initialize() {
+        this.amqp = amqp;
+        console.log('created amqp callback');
+        this.connect();
+        return this;
+    },
 
-    amqp.connect('amqp://localhost', function (err, conn) {
-        conn.createChannel(function (err, ch) {
-            var queue1 = 'sampleTest';
-            ch.assertQueue(queue1, {durable: false});
-            console.log('Queue created');
+    handleError(err) {
+        console.log('Failed with error code: ' + err.code);
+        return false;
+    },
+
+    connect() {
+        this.amqp.connect(this.host, (err, conn) => {
+
+            // handle exceptions/errors before
+            // continuing with the flow
+            if (err && err.code) {
+                return this.handleError(err);
+            }
+
+            conn.createChannel((err, ch) => {
+
+                if (err && err.code) {
+                    return this.handleError(err);
+                }
+
+                const queue1 = 'sampleTest';
+                ch.assertQueue(queue1, {
+                    durable: false
+                });
+
+                console.log('Queue created');
+            });
         });
-        // setTimeout(function() { conn.close(); process.exit(0) }, 500);
-    });
+    }
+};
 
-//}
-    return self;
-}
-
-module.exports = createConn;
+module.exports = AMPQConnector;
